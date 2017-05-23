@@ -5,6 +5,8 @@ function [ A, dimOut ] = fitAtoB( A, coordA, B, coordB, size_voxel  )
 dCoord = round(coordB' - coordA, 1);
 
 dVoxel =  dCoord / size_voxel; % Nombre de voxels de dÈcalage ‡ la base de la grille
+dVoxel = floor(dVoxel);
+
 
 dimA= size(A);
 dimB= size(B);
@@ -12,6 +14,16 @@ dimOut = zeros(1,3);
 %%Out = zeros(dim(B));
     %% DÈtection de dÈpassement
     for i=1:3
+        if(dVoxel(i)<0) % Si les coordonnÈes ‡ la base de la grille de rÈfÈrence sont plus petites que celles de la grille ‡ formater on retraille la grille de rÈfÈrence
+        dimB(i)=dimB(i)+dVoxel(i);
+        coordB(i)=coordB(i)-dVoxel(i)*size_voxel;
+
+        dCoord = round(coordB' - coordA, 1);
+        dVoxel =  dCoord / size_voxel; % Nombre de voxels de dÈcalage ‡ la base de la grille
+        dVoxel = floor(dVoxel);
+
+        end
+
         if(dVoxel(i)+dimB(i)>dimA(i)) % Si la grille √† formater est plus petite que la grille de r√©f√©rence alors on prend le maximum de voxel sans la d√©passer.
             dimOut(i) = dimA(i)-dVoxel(i);
 
@@ -31,14 +43,13 @@ dimOut = zeros(1,3);
 %     Out(1:dimOut(1), 1:dimOut(2),1:dimOut(3)) = A(1:dimOut(1), 1:dimOut(2),1:dimOut(3));
 % 
 %     
-    
 
-    %% RÈsultat final
+%% RÈsultat final
 
     vect = zeros(3,2);
 
     for i=1:3
-    vect(i,:) = [dVoxel(i)+1 dVoxel(i)+dimOut(i)];
+            vect(i,:) = [dVoxel(i)+1 dVoxel(i)+dimOut(i)];
     end
 
     if(ndims(A)==4)
