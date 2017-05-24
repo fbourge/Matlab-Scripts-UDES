@@ -1,31 +1,27 @@
-function [A_sommeXZ_Lvox,B_sommeXZ_Lvox,A_sommeZ1_Lvox,B_sommeZ1_Lvox,scaleZ]=compare2SetOfGrids( placette, dimension, reduction )
+function [A_sommeXZ_Lvox,B_sommeXZ_Lvox,A_sommeZ1_Lvox,B_sommeZ1_Lvox,scaleZ]=compare2SetOfGrids( placette, size_cm, reduction )
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
 num_erreur = 3;
 
 %% Chargement des grilles Avant
-load(strcat(placette,'_avant_',dimension),'-mat');
-A_isTOTAL_hits = size(result,2)==6;
+load(strcat(placette,'_avant_',size_cm,'.mat'));
 A_size_voxel = result{1};
 A_grid3D_lvox_corrected = result{2};
 A_grid3D_ = result{3};
-A_grid3D_value = result{4};
-if(A_isTOTAL_hits)
-    A_grid3D_TOTAL_value = result{5};
-    [A_grid3D_TOTAL_value, A_bbox_minimal, A_bbox_coord_minimal, A_dim, A_m_4D ] = minimal3D_BBox( A_grid3D_TOTAL_value, [0,0,0], A_size_voxel );
-     [ A_sommeYZ_Hits_TOTAL, A_sommeXZ_Hits_TOTAL, A_sommeXY_Hits_TOTAL, A_sommeZ1_Hits_TOTAL, A_sommeZ2_Hits_TOTAL ] = profile_density_Hits( A_grid3D_TOTAL_value);
-     A_sommeZ1_Hits_TOTAL(1:7)=0;
-end
+A_grid3D_TOTAL_value = result{4};
 
-[A_grid3D_value, A_bbox_minimal, A_bbox_coord_minimal, A_dim, A_m_4D ] = minimal3D_BBox( A_grid3D_value, [0,0,0], A_size_voxel );
-[A_grid3D_, A_bbox_minimal, A_bbox_coord_minimal, A_dim, A_m_4D ] = minimal3D_BBox( A_grid3D_, [0,0,0], A_size_voxel );
+[A_grid3D_TOTAL_value, A_bbox_minimal, A_bbox_coord_minimal, A_dim, A_m_4D ] = minimal3D_BBox( A_grid3D_TOTAL_value, [0,0,0], A_size_voxel );
+[ A_sommeYZ_Hits_TOTAL, A_sommeXZ_Hits_TOTAL, A_sommeXY_Hits_TOTAL, A_sommeZ1_Hits_TOTAL, A_sommeZ2_Hits_TOTAL ] = profile_density_Hits( A_grid3D_TOTAL_value);
+
+
+A_sommeZ1_Hits_TOTAL(1:7)=0;
 dim = size(A_grid3D_);
 A_grid3D_noData = zeros(dim(1), dim(2), dim(3), num_erreur);
 A_grid3D_noData(A_grid3D_<0) = 1; 
 % -------------------
 
 %% Chargement des grilles Après
-load(strcat(placette,'_apres_',dimension),'-mat');
+load(strcat(placette,'_apres_',size_cm),'-mat');
 B_isTOTAL_hits = size(result,2)==6;
 B_size_voxel = result{1};
 B_grid3D_lvox_corrected = result{2};
@@ -50,16 +46,16 @@ B_grid3D_noData(A_grid3D_<0) = 1;
 
 % Ecrasement des valeurs trop fortes
 if(reduction)
-A_grid3D_resized(A_grid3D_resized>0.05)=0;
-B_grid3D_resized(B_grid3D_resized>0.05)=0;
-end
+A_grid3D_resized(A_grid3D_resized>10)=0;
+B_grid3D_resized(B_grid3D_resized>10)=0;
+%end
 
 % Calcul des pofils
 [ A_sommeYZ_Lvox, A_sommeXZ_Lvox, A_sommeZ1_Lvox, A_sommeZ2_Lvox, A_sommeXY_Lvox ] = ...
-     profile_density_LVOX( A_grid3D_resized, strcat(placette,'Avant'), A_size_voxel, 1 );
+     profile_density_LVOX( A_grid3D_resized, strcat(placette,'Avant'), A_size_voxel, 0 );
 % 
  [ B_sommeYZ_Lvox, B_sommeXZ_Lvox, B_sommeZ1_Lvox, B_sommeZ2_Lvox, B_sommeXY_Lvox ] = ...
-     profile_density_LVOX( B_grid3D_resized, strcat(placette,'Apres'), B_size_voxel, 1 );
+     profile_density_LVOX( B_grid3D_resized, strcat(placette,'Apres'), B_size_voxel, 0 );
  
 %% Reduce dimension
 if(reduction)
@@ -69,7 +65,7 @@ if(reduction)
  A_size_voxel = 1;
 end
 
-dimension = num2str(A_size_voxel);
+size_cm = num2str(A_size_voxel);
 
 %% Adjust profiles
 % Ajustement de la grille de densité avant sur la grille de densite apres
@@ -112,7 +108,7 @@ scaleZ = (A_size_voxel:A_size_voxel:size(A_sommeZ1_Lvox,1)*A_size_voxel)'; % nou
 
 
 % Create figure
-figure1 = figure('Name',strcat(placette,'_apres_',dimension),'NumberTitle','off', 'Position', [20 30 1350 780]);
+figure1 = figure('Name',strcat(placette,'_apres_',size_cm),'NumberTitle','off', 'Position', [20 30 1350 780]);
 colormap('pink');
 % Create axes
 % axes1 = axes('Parent',figure1,...
@@ -143,7 +139,7 @@ l10 = line(A_sommeZ1_Hits_TOTAL(1:size(scaleZ,1)),scaleZ,'Color','k','LineWidth'
 ax1 = get(gca); % current axes
 
 
-xlabel('$points.couche^{-1}$ (\%)','Interpreter','Latex','FontSize',16);
+xlabel('$return.couche^{-1}$','Interpreter','Latex','FontSize',16);
 ylabel('Hauteur Z (m)','Interpreter','Latex','FontSize',16);
 
 set(gca,'XColor','k');
@@ -159,8 +155,8 @@ ax2 = axes('Position',ax1_pos,...
 
 l20 = line(A_sommeZ1_Lvox,scaleZ,'Parent',ax2,'Color','b','LineStyle','-','LineWidth',1.5);
 l21 = line(B_sommeZ1_Lvox,scaleZ,'Parent',ax2,'Color','g','LineStyle','-','LineWidth',1.5);
-legend([l10 l20 l21 ],'Retours_{avant}','IDR_{avant}','IDR_{apres}');
-xlabel('$moy(IDR).couche^{-1}$','Interpreter','Latex','FontSize',16);
+legend([l10 l20 l21 ],'Retours_{avant}','PAD_{avant}','PAD_{apres}');
+xlabel('$PAD (m^{2}.m^{-3}.)$','Interpreter','Latex','FontSize',16);
 
 set(gca,'XColor','b');
 set(gca,'YColor','k');
@@ -193,7 +189,7 @@ text('Parent',ax,'Interpreter','latex','FontSize',15,...
 
 % Add dimension string
 text('Parent',ax,'Interpreter','latex','FontSize',12,...
-    'String',strcat('{R\''esolution} de la grille :{ }',dimension,' m'),...
+    'String',strcat('{R\''esolution} de la grille :{ }',size_cm,' m'),...
     'Position',[0 0.90 0],...
     'Visible','on');
 
@@ -243,8 +239,8 @@ plot(x,yCalc2,'--','Parent', sub5)
 
 
 legend('Ref 1:1','Data','a.x','a.x + b','Location','best');
-xlabel('Profil avant (IDR)');
-ylabel('Profil apres (IDR)');
+xlabel('Profil avant (PAD)');
+ylabel('Profil apres (PAD)');
 
 
 end
