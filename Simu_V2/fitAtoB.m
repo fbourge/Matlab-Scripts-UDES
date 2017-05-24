@@ -8,41 +8,37 @@ dVoxel =  dCoord / size_voxel; % Nombre de voxels de décalage à la base de la gr
 dVoxel = floor(dVoxel);
 
 
-dimA= size(A);
-dimB= size(B);
+dimA = size(A);
+dimB = size(B);
 dimOut = zeros(1,3);
-%%Out = zeros(dim(B));
-    %% Détection de dépassement
+    %% Repositionnement des voxels à la base de la grille en cas de déficite
     for i=1:3
         if(dVoxel(i)<0) % Si les coordonnées à la base de la grille de référence sont plus petites que celles de la grille à formater on retraille la grille de référence
-        dimB(i)=dimB(i)+dVoxel(i);
-        coordB(i)=coordB(i)-dVoxel(i)*size_voxel;
+
+        dimA(i) = dimA(i) - dVoxel(i);
+        coordA(i) = coordA(i) + dVoxel(i)*size_voxel;
+
+        dimTmp = dimA;
+        dimTmp(i)= abs(dVoxel(i));
+        A = cat(i,zeros(dimTmp),A);  % Ajoute des plans en 2D à la base pour completer la dimension i déficitaire
 
         dCoord = round(coordB' - coordA, 1);
         dVoxel =  dCoord / size_voxel; % Nombre de voxels de décalage à la base de la grille
-        dVoxel = floor(dVoxel);
-
-        end
-
-        if(dVoxel(i)+dimB(i)>dimA(i)) % Si la grille Ã  formater est plus petite que la grille de rÃ©fÃ©rence alors on prend le maximum de voxel sans la dÃ©passer.
-            dimOut(i) = dimA(i)-dVoxel(i);
-
-        else
-            dimOut(i) = dimB(i);
+        dVoxel = floor(dVoxel); % doit être = 0
         end
     end
 
-% for i =1:3
-%     if(dimA(i)>dimB(i)) 
-%         dimOut(i)=dimB(i);
-%     else
-%         dimOut(i)=dimA(i);
-%     end
-% end
-%     
-%     Out(1:dimOut(1), 1:dimOut(2),1:dimOut(3)) = A(1:dimOut(1), 1:dimOut(2),1:dimOut(3));
-% 
-%     
+
+    dimOut = dimB;
+    dimTmp = dimA;
+
+    % Détection des dépassements aux extremums de la grille
+    for i=1:3
+        if(dVoxel(i) + dimB(i) > dimA(i)) % Si la grille à formater est plus petite que la grille de référence alors on ajoute les case manquantes.
+            dimTmp(i) = dimB(i) -  (dimA(i) - dVoxel(i));
+            A = cat(i,A,zeros(dimTmp));
+        end
+    end
 
 %% Résultat final
 
