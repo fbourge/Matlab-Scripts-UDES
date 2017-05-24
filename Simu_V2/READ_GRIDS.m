@@ -6,6 +6,7 @@ function [ grid3D_Zcm, bbox_X_minimal, grid_pos_X_mini, dim_X_Zcm, size_X_Zcm  ]
 grid_pos_X_Zcm = round (grid_pos_X_Zcm,3); % Arrondi au troisieme chiffre après la virgule.
 [grid3D_Zcm, bbox_X_minimal, grid_pos_X_mini, dim_X_Zcm ] = minimal3D_BBox( grid3D_Zcm, grid_pos_X_Zcm, size_X_Zcm );
 
+size_X_Zcm = round(size_X_Zcm, 3);
 
 
 end
