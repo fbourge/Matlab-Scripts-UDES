@@ -33,7 +33,7 @@ typename = {'_avant_','_apres_'};
 
 %% READ Computed grids
 for p=1:5 % Cinq placettes
-    for r=1:1 % Trois resolutions
+    for r=1:3 % Trois resolutions
         for mtype=1:2 % Avant et apres degagement
 
             placettePath = strcat(placette{p}{1},placette{p}{mtype + 2});
@@ -84,7 +84,7 @@ for p=1:5 % Cinq placettes
             end
         end
 
-       [A_sommeXZ_Lvox,B_sommeXZ_Lvox,scaleZ] = compare2SetOfGrids( placette{p}{2}, resolution{r},true);
+       [A_sommeXZ_Lvox,B_sommeXZ_Lvox,scaleZ] = compare2SetOfGrids( placette{p}{2}, resolution{r},0);
 
     end
 end
