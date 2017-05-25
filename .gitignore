@@ -5,6 +5,7 @@
 !.gitignore
 !*.m
 !*.tiff
+!*.png
 !
 # etc...
 

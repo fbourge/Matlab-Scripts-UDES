@@ -243,7 +243,7 @@ legend('Ref 1:1','Data','a.x','a.x + b','Location','best');
 xlabel('Profil avant (PAD)');
 ylabel('Profil apres (PAD)');
 
-saveas(figure1,strcat(placette,size_cm,'cm.tiff'));
+saveas(figure1,strcat(placette,size_cm,'cm.png'));
 
 end
 
