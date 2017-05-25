@@ -47,7 +47,7 @@ B_grid3D_noData(A_grid3D_<0) = 1;
 % Ecrasement des valeurs trop fortes
 if(1)
 A_grid3D_resized(A_grid3D_resized>10)=0;
-B_grid3D_resized(B_grid3D_resized>20)=0;
+B_grid3D_resized(B_grid3D_resized>10)=0;
 end
 
 % Calcul des pofils
