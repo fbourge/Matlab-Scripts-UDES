@@ -45,10 +45,17 @@ B_grid3D_noData(A_grid3D_<0) = 1;
 [B_grid3D_resized, B_bbox_minimal, B_bbox_coord_minimal, B_dim, B_m_4D ] = minimal3D_BBox( B_grid3D_lvox_corrected, [0,0,0], B_size_voxel );
 
 % Ecrasement des valeurs trop fortes
+<<<<<<< HEAD
 if(1)
 A_grid3D_resized(A_grid3D_resized>10)=0;
 B_grid3D_resized(B_grid3D_resized>20)=0;
 end
+=======
+if(reduction)
+A_grid3D_resized(A_grid3D_resized>10)=0;
+B_grid3D_resized(B_grid3D_resized>10)=0;
+%end
+>>>>>>> 67298d2ebe912027610c60f59fbc9b3b7e3f1656
 
 % Calcul des pofils
 [ A_sommeYZ_Lvox, A_sommeXZ_Lvox, A_sommeZ1_Lvox, A_sommeZ2_Lvox, A_sommeXY_Lvox ] = ...
@@ -139,7 +146,11 @@ l10 = line(A_sommeZ1_Hits_TOTAL(1:size(scaleZ,1)),scaleZ,'Color','k','LineWidth'
 ax1 = get(gca); % current axes
 
 
+<<<<<<< HEAD
 xlabel('$points/couche$','Interpreter','Latex','FontSize',16);
+=======
+xlabel('$return.couche^{-1}$','Interpreter','Latex','FontSize',16);
+>>>>>>> 67298d2ebe912027610c60f59fbc9b3b7e3f1656
 ylabel('Hauteur Z (m)','Interpreter','Latex','FontSize',16);
 
 set(gca,'XColor','k');
@@ -156,7 +167,11 @@ ax2 = axes('Position',ax1_pos,...
 l20 = line(A_sommeZ1_Lvox,scaleZ,'Parent',ax2,'Color','b','LineStyle','-','LineWidth',1.5);
 l21 = line(B_sommeZ1_Lvox,scaleZ,'Parent',ax2,'Color','g','LineStyle','-','LineWidth',1.5);
 legend([l10 l20 l21 ],'Retours_{avant}','PAD_{avant}','PAD_{apres}');
+<<<<<<< HEAD
 xlabel('$moy(PAD)/couche (m^{2}.m^{-3}.)$','Interpreter','Latex','FontSize',16);
+=======
+xlabel('$PAD (m^{2}.m^{-3}.)$','Interpreter','Latex','FontSize',16);
+>>>>>>> 67298d2ebe912027610c60f59fbc9b3b7e3f1656
 
 set(gca,'XColor','b');
 set(gca,'YColor','k');
